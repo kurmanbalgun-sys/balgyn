@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Tasks</h2>
+  <table>
+    <tr><th>Title</th><th>Project</th><th>Assignee</th><th>Status</th><th>Priority</th></tr>
+    {% for t in tasks %}
+      <tr>
+        <td>{{ t.title }}</td>
+        <td>{{ t.project.name if t.project }}</td>
+        <td>{{ t.assignee.username if t.assignee }}</td>
+        <td>{{ t.status.value }}</td>
+        <td>{{ t.priority.value }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <h3>Add Task</h3>
+  <form method="post" action="{{ url_for('add_task') }}">
+    <input name="title" placeholder="Title" required>
+    <input name="description" placeholder="Description">
+    <select name="assignee">
+      <option value="">--assignee--</option>
+      {% for u in tasks|map(attribute='assignee')|list %}
+      {% endfor %}
+      {% for u in [] %}{% endfor %}
+      {% for u in (tasks[0].assignee and [tasks[0].assignee] or []) %}{% endfor %}
+      {% for u in [] %}{% endfor %}
+    </select>
+    <!-- simpler: let backend pick by username of repo -->
+    <p>To assign task manually edit code/demo (for simplicity)</p>
+    <label><input type="checkbox" name="recurring"> Recurring</label>
+    <button type="submit">Add</button>
+  </form>
+{% endblock %}
